@@ -11,28 +11,30 @@ plt.axis('off')
 
 ####################
 
-MAX_BUCKET_SIZE=4
-GRID_SIZE=101
+MAX_BUCKET_SIZE = 4
+GRID_SIZE = 101
+
 
 def topple(m):
     next_m = np.zeros(m.shape)
-    for kx,vx in np.ndenumerate(m):
+    for kx, vx in np.ndenumerate(m):
         if vx >= MAX_BUCKET_SIZE:
             m[kx] -= MAX_BUCKET_SIZE
             cool = np.array(kx)
-            if kx[1] + 1 <= m.shape[1]-1:
-                next_m[tuple(cool+[0,1])] += 1
+            if kx[1] + 1 <= m.shape[1] - 1:
+                next_m[tuple(cool + [0, 1])] += 1
             if kx[1] - 1 >= 0:
-                next_m[tuple(cool+[0,-1])] += 1
-            if kx[0] + 1 <= m.shape[1]-1:
-                next_m[tuple(cool+[1,0])] += 1
+                next_m[tuple(cool + [0, -1])] += 1
+            if kx[0] + 1 <= m.shape[0] - 1:
+                next_m[tuple(cool + [1, 0])] += 1
             if kx[0] - 1 >= 0:
-                next_m[tuple(cool+[-1,0])] += 1
+                next_m[tuple(cool + [-1, 0])] += 1
     m += next_m
 
-z = np.ones([GRID_SIZE, GRID_SIZE]) * 0
-n = np.zeros([GRID_SIZE, GRID_SIZE])
-n[int(np.round(GRID_SIZE/2))][int(np.round(GRID_SIZE/2))] = 1000
+
+z = np.ones([int(GRID_SIZE / 2), GRID_SIZE]) * 0
+n = np.zeros([int(GRID_SIZE / 2), GRID_SIZE])
+n[int(np.round((GRID_SIZE / 2) / 2))][int(np.round(GRID_SIZE / 2))] = 1000
 
 print('z')
 print(z)
