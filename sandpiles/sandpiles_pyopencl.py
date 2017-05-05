@@ -16,11 +16,6 @@ plt.axis('off')
 img = np.random.randn(1080, 1920).astype(np.float32)
 #img = imread('noisyImage.jpg', flatten=True).astype(np.float32)
 
-# Get platforms, both CPU and GPU
-# plat = cl.get_platforms()
-# GPU = plat[0].get_devices()
-# print(GPU)
-#ctx = cl.Context(GPU)
 ctx = cl.create_some_context()
 
 # Create queue for each kernel execution
@@ -106,4 +101,12 @@ cl.enqueue_copy(queue, final, result_g)
 # imsave('medianFilter-OpenCL.jpg', final)
 
 plt.imshow(final, interpolation='nearest')
+
+plt.figure()
+fig = plt.gcf()
+fig.canvas.set_window_title('matplotlib_float_')
+plt.axis('off')
+
+plt.imshow(img, interpolation='nearest')
+
 plt.show()
