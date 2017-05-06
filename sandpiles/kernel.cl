@@ -1,13 +1,15 @@
-__kernel void topple(__global float *current, __global int *topplers,  __global float *next, __global int *width, __global int *height) {
+void topple(__global float *current, __global int *topplers, __global float *next, __global int *width, __global int *height) {
     int w = *width;
     int h = *height;
     int posx = get_global_id(1);
     int posy = get_global_id(0);
     int i = w*posy + posx;
 
-    //// mark topplers
+    next[i] = 0; // clear all
+    topplers[i] = 0; // clear all
+
     if (current[i] >= 4.0f) {
-        topplers[i] = 1;
+        topplers[i] = 1; // set some
     }
 
     barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
@@ -20,7 +22,6 @@ __kernel void topple(__global float *current, __global int *topplers,  __global 
 
     // if( posx == 0 || posy == 0 || posx == w-1 || posy == h-1 ) {
 
-    //if posx >= w
     //// add toppler neighbors
     if (topplers[ix0] >= 1 && (posx - 1) >= 0) {
         next[i] += 1.0f;
@@ -41,8 +42,25 @@ __kernel void topple(__global float *current, __global int *topplers,  __global 
         next[i] -= 4.0f;
     }
 
+    barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
+
+    current[i] += next[i];
+}
+
+__kernel void toppleKernel(__global float *current, __global int *topplers,  __global float *next, __global int *width, __global int *height) {
+    int w = *width;
+    int h = *height;
+    int posx = get_global_id(1);
+    int posy = get_global_id(0);
+    int i = w*posy + posx;
+
     // TODO: sick while loop here (just have all write if not 0, and check if not 0)
-    // while any(curent) > 4:
-    // topple
-    // current += next;
+    // while any(current) > 4:
+
+    while (current[i] >= 4.0f) {
+        /* barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE); */
+        /* if (posx == 0 && posy == 0) { */
+        topple(current, topplers, next, width, height);
+        /* } */
+    }
 }

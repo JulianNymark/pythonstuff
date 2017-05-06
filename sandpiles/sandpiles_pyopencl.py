@@ -38,7 +38,7 @@ with open('kernel.cl', 'r') as myfile:
 prg = cl.Program(ctx, src).build()
 # Allocate memory for variables on the device
 current_g = cl.Buffer(ctx,
-                      mf.READ_ONLY | mf.COPY_HOST_PTR,
+                      mf.COPY_HOST_PTR,
                       hostbuf=img)
 topplers_g = cl.Buffer(ctx,
                        mf.COPY_HOST_PTR,
@@ -57,12 +57,12 @@ height_g = cl.Buffer(ctx,
 cl.enqueue_fill_buffer(queue, next_g, np.float32(0), 0, topplers.nbytes)
 
 # Call Kernel. Automatically takes care of block/grid distribution
-prg.topple(queue, img.shape, None,
-           current_g,
-           topplers_g,
-           next_g,
-           width_g,
-           height_g)
+prg.toppleKernel(queue, img.shape, None,
+                 current_g,
+                 topplers_g,
+                 next_g,
+                 width_g,
+                 height_g)
 
 next_iteration = np.zeros(img.shape).astype(np.float32)
 cl.enqueue_copy(queue, next_iteration, next_g)
