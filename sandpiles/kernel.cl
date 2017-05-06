@@ -23,24 +23,26 @@ __kernel void topple(__global float *current, __global int *topplers,  __global 
     //if posx >= w
     //// add toppler neighbors
     if (topplers[ix0] >= 1 && (posx - 1) >= 0) {
-        next[i] = next[i] + 1.0f;
+        next[i] += 1.0f;
     }
     if (topplers[ix1] >= 1 && (posx + 1) < w) {
-        next[i] = next[i] + 1.0f;
+        next[i] += 1.0f;
     }
     if (topplers[iy0] >= 1 && (posy - 1) >= 0) {
-        next[i] = next[i] + 1.0f;
+        next[i] += 1.0f;
     }
     if (topplers[iy1] >= 1 && (posy + 1) < h) {
-        next[i] = next[i] + 1.0f;
+        next[i] += 1.0f;
     }
     //next[i] += topplers[ix0] + topplers[ix1] + topplers[iy0] + topplers[iy1];
 
     if (topplers[i] >= 1) {
         //// subtract topplers self
-        next[i] = next[i] - 4.0f;
+        next[i] -= 4.0f;
     }
 
     // TODO: sick while loop here (just have all write if not 0, and check if not 0)
-
+    // while any(curent) > 4:
+    // topple
+    // current += next;
 }

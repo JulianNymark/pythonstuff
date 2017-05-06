@@ -69,13 +69,6 @@ cl.enqueue_copy(queue, next_iteration, next_g)
 topplers_r = np.zeros(img.shape).astype(np.int32)
 cl.enqueue_copy(queue, topplers_r, topplers_g)
 
-print('img')
-print(img)
-print('topplers')
-print(topplers_r)
-print('next_iteration')
-print(next_iteration)
-
 plt.imshow(next_iteration, interpolation='nearest')
 
 plt.figure()
