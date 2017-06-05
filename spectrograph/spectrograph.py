@@ -1,13 +1,18 @@
-import matplotlib
-matplotlib.use('Qt5Agg')
-from matplotlib import pyplot as plt
+# import matplotlib
+# matplotlib.use('Qt5Agg')
+# from matplotlib import pyplot as plt
+
+# from PIL import Image
+
 import pyaudio
 import sys
 import numpy as np
+import time
 from cv2 import *
 
-fig = plt.gcf()
-fig.canvas.set_window_title('matplotlib_float_')
+## matplotlib
+# fig = plt.gcf()
+# fig.canvas.set_window_title('matplotlib_float_')
 
 # No. of input samples used for a single FFT
 CHUNK_SIZE = 1024
@@ -35,8 +40,6 @@ stream = p.open(format=pyaudio.paInt16,
 
 spectrogram = np.zeros([WINDOW_WIDTH, HEIGHT], dtype='uint16')
 
-i2 = 0
-
 while (True):
     data = stream.read(CHUNK_SIZE)
     data = np.fromstring(data, 'int16')
@@ -57,10 +60,15 @@ while (True):
 
     spectrogram = tmp
 
-    plt.imshow(spectrogram)
-    plt.pause(0.05)
+    imshow('spectrogram', spectrogram)
+    time.sleep(5)
 
-    i2 += 1
+    ## PIL
+    # img = Image.fromarray(spectrogram)
+    # img.show()
+    ## matplotlib
+    # plt.imshow(spectrogram)
+    # plt.pause(0.05)
 
 stream.stop_stream()
 stream.close()
