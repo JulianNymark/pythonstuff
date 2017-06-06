@@ -7,11 +7,10 @@ import numpy as np
 
 def gray(im):
     im = 255 * (im / im.max())
-    print(im.shape)
     w = im.shape[0]
     h = im.shape[1]
     ret = np.zeros((w, h, 3), dtype=np.uint8)
-    ret[:, :, 2] = ret[:, :, 1] = ret[:, :, 0] = im
+    ret[..., 2] = ret[..., 1] = ret[..., 0] = im
     return ret
 
 
@@ -40,8 +39,6 @@ stream = p.open(format=pyaudio.paInt16,
 
 
 spectrogram = np.zeros([WINDOW_WIDTH, HEIGHT], dtype='uint16')
-print('theshape!', spectrogram.shape)
-
 
 screen = pygame.display.set_mode((WINDOW_WIDTH, HEIGHT))
 
@@ -59,18 +56,11 @@ while (True):
 
     for i in range(1, HEIGHT):
         rvalue = abs(int(np.real(freq[i])))
-        #print(i2, i, rvalue)
-
         tmp[-1, HEIGHT - i] = rvalue
 
     spectrogram = tmp
 
-    i2 += 1
-
-    print('theshapeagain!', spectrogram.shape)
     image = gray(spectrogram)
-    print('theshapeoncemore!', spectrogram.shape)
-
     surface = pygame.surfarray.make_surface(image)
 
     screen.blit(surface, (0, 0))
