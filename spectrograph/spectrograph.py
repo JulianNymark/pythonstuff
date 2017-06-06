@@ -15,7 +15,7 @@ def gray(im):
 
 
 # No. of input samples used for a single FFT
-CHUNK_SIZE = 2048
+CHUNK_SIZE = 1024
 
 # Sampling rate
 RATE = 44100
@@ -33,7 +33,7 @@ stream = p.open(format=pyaudio.paInt16,
                 rate=RATE,
                 input=True,
                 frames_per_buffer=CHUNK_SIZE,
-                input_device_index=3 # if default don't work, set this to
+                input_device_index=12  # if default don't work, set this to
                 # an audio device given by "python -m sounddevice"!
                 )
 
@@ -46,7 +46,6 @@ while (True):
     data = stream.read(CHUNK_SIZE, exception_on_overflow=False)
     data = np.fromstring(data, 'int16')
     freq = np.fft.rfft(data)
-    print("SHAPEEEEE", freq.shape)
 
     tmp = np.zeros([WINDOW_WIDTH, HEIGHT], dtype='uint16')
 
@@ -55,13 +54,7 @@ while (True):
     tmp[0:WINDOW_WIDTH - 1, 0:HEIGHT] = spectrogram[1:WINDOW_WIDTH, 0:HEIGHT]
 
     for i in range(1, HEIGHT):
-        # rvalue = abs(int(np.real(freq[i])))
-        idx = (CHUNK_SIZE/2) * i**2/(((CHUNK_SIZE / 2))**2)
-        diff = idx - np.floor(idx)
-        r_v1 = abs(int(np.real(freq[int(idx)])))
-        r_v2 = abs(int(np.real(freq[int(idx) + 1])))
-        rvalue = r_v1 * diff + r_v2 * (1 - diff)
-        # rvalue = abs(int(np.real(freq[int(idx)])))
+        rvalue = abs(int(np.real(freq[i])))
         tmp[-1, HEIGHT - i] = rvalue
 
     spectrogram = tmp
