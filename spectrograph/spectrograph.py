@@ -30,8 +30,9 @@ stream = p.open(format=pyaudio.paInt16,
 
 spectrogram = np.zeros([WINDOW_WIDTH, HEIGHT], dtype='uint16')
 
-i2 = 0
+screen = pygame.display.set_mode((WINDOW_WIDTH, HEIGHT))
 
+i2 = 0
 while (True):
     data = stream.read(CHUNK_SIZE)
     data = np.fromstring(data, 'int16')
@@ -54,10 +55,16 @@ while (True):
     i2 += 1
 
     surface = pygame.surfarray.make_surface(spectrogram)
+    #surface.set_masks((65535, 0, 0, 0))
+    # print(surface.get_masks())
 
-    screen = pygame.display.set_mode((WINDOW_WIDTH, HEIGHT))
     screen.blit(surface, (0, 0))
     pygame.display.flip()
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT or pygame.key.get_pressed()[pygame.K_ESCAPE]:
+            pygame.quit()
+            break
 
 stream.stop_stream()
 stream.close()
