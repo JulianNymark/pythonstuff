@@ -4,6 +4,17 @@ import pygame
 
 import numpy as np
 
+
+def gray(im):
+    im = 255 * (im / im.max())
+    print(im.shape)
+    w = im.shape[0]
+    h = im.shape[1]
+    ret = np.zeros((w, h, 3), dtype=np.uint8)
+    ret[:, :, 2] = ret[:, :, 1] = ret[:, :, 0] = im
+    return ret
+
+
 # No. of input samples used for a single FFT
 CHUNK_SIZE = 1024
 
@@ -29,6 +40,8 @@ stream = p.open(format=pyaudio.paInt16,
 
 
 spectrogram = np.zeros([WINDOW_WIDTH, HEIGHT], dtype='uint16')
+print('theshape!', spectrogram.shape)
+
 
 screen = pygame.display.set_mode((WINDOW_WIDTH, HEIGHT))
 
@@ -38,7 +51,7 @@ while (True):
     data = np.fromstring(data, 'int16')
     freq = np.fft.rfft(data)
 
-    tmp = np.zeros(spectrogram.shape, dtype='uint16')
+    tmp = np.zeros([WINDOW_WIDTH, HEIGHT], dtype='uint16')
 
     # Copy LAST WIDTH-1 columns from spectogram
     # to the FIRST WIDTH-1 columns in tmp
@@ -46,17 +59,28 @@ while (True):
 
     for i in range(1, HEIGHT):
         rvalue = abs(int(np.real(freq[i])))
-        print(i2, i, rvalue)
+        #print(i2, i, rvalue)
 
         tmp[-1, HEIGHT - i] = rvalue
+        # tmp[-1, HEIGHT - i] = rvalue  / (2**16) * 255  # 0 -> 255
+
+        # if rvalue > 1000:
+        #     tmp[-1, HEIGHT - i] = 1
+        # else:
+        #     tmp[-1, HEIGHT - i] = 0
 
     spectrogram = tmp
 
     i2 += 1
 
-    surface = pygame.surfarray.make_surface(spectrogram)
-    #surface.set_masks((65535, 0, 0, 0))
-    # print(surface.get_masks())
+    print('theshapeagain!', spectrogram.shape)
+    image = gray(spectrogram)
+    print('theshapeoncemore!', spectrogram.shape)
+
+    surface = pygame.surfarray.make_surface(image)
+    # surface.set_masks((127, 0, 0, 0))
+    # surface.set_shifts((16, 0, 0, 0))
+    # print(surface.get_masks(), surface.get_shifts())
 
     screen.blit(surface, (0, 0))
     pygame.display.flip()
