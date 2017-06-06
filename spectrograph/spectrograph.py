@@ -62,12 +62,6 @@ while (True):
         #print(i2, i, rvalue)
 
         tmp[-1, HEIGHT - i] = rvalue
-        # tmp[-1, HEIGHT - i] = rvalue  / (2**16) * 255  # 0 -> 255
-
-        # if rvalue > 1000:
-        #     tmp[-1, HEIGHT - i] = 1
-        # else:
-        #     tmp[-1, HEIGHT - i] = 0
 
     spectrogram = tmp
 
@@ -78,9 +72,6 @@ while (True):
     print('theshapeoncemore!', spectrogram.shape)
 
     surface = pygame.surfarray.make_surface(image)
-    # surface.set_masks((127, 0, 0, 0))
-    # surface.set_shifts((16, 0, 0, 0))
-    # print(surface.get_masks(), surface.get_shifts())
 
     screen.blit(surface, (0, 0))
     pygame.display.flip()
