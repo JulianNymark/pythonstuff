@@ -1,6 +1,7 @@
 import pyaudio
 import sys
 import pygame
+import math
 
 import numpy as np
 
@@ -21,7 +22,7 @@ CHUNK_SIZE = 1024
 RATE = 44100
 
 # Spectrogram's width in pixels
-WINDOW_WIDTH = int(700)
+WINDOW_WIDTH = int(1400)
 
 # Spectrogram's height in pixels
 HEIGHT = int(CHUNK_SIZE / 2)
@@ -41,7 +42,6 @@ spectrogram = np.zeros([WINDOW_WIDTH, HEIGHT], dtype='uint16')
 
 screen = pygame.display.set_mode((WINDOW_WIDTH, HEIGHT))
 
-i2 = 0
 while (True):
     data = stream.read(CHUNK_SIZE, exception_on_overflow=False)
     data = np.fromstring(data, 'int16')
@@ -54,7 +54,9 @@ while (True):
     tmp[0:WINDOW_WIDTH - 1, 0:HEIGHT] = spectrogram[1:WINDOW_WIDTH, 0:HEIGHT]
 
     for i in range(1, HEIGHT):
-        rvalue = abs(int(np.real(freq[i])))
+        idx = round((float(i**1.5) / HEIGHT**1.5) * HEIGHT)
+        # replace idx with i if you want linear
+        rvalue = abs(int(np.real(freq[idx])))
         tmp[-1, HEIGHT - i] = rvalue
 
     spectrogram = tmp
@@ -65,9 +67,11 @@ while (True):
     screen.blit(surface, (0, 0))
     pygame.display.flip()
 
+    pygame.event.pump()
+    # event = pygame.event.wait() # ?? only redraws when mouse over?
     for event in pygame.event.get():
         if event.type == pygame.QUIT or pygame.key.get_pressed()[pygame.K_ESCAPE]:
-            pygame.quit()
+            pygame.display.quit()
             break
 
 stream.stop_stream()
